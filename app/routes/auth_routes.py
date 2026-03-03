@@ -17,7 +17,7 @@ from app.schemas import MeResponse, OrganisationOut, TokenResponse, UserOut
 from app.logging_config import get_logger
 
 logger = get_logger(__name__)
-router = APIRouter(prefix="/auth", tags=["auth"])
+router = APIRouter(prefix="/api/auth", tags=["auth"])
 callback_router = APIRouter(tags=["auth"])
 
 oauth = OAuth()
@@ -114,9 +114,9 @@ async def google_callback(request: Request, db: AsyncSession = Depends(get_db)):
         )
         db.add(org)
         await db.flush()
-        role = UserRole.admin
-    else:
-        role = UserRole.member
+
+    # Every new user gets admin role
+    role = UserRole.admin
 
     # Create the user
     user = User(

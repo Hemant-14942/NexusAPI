@@ -15,10 +15,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
+# Set PYTHONPATH so alembic and app modules resolve correctly
+ENV PYTHONPATH=/app
+
 # Expose port
 EXPOSE 8000
 
-# Default command: run the API server
-# To this:
-# Replace the existing CMD line with this:
-CMD uvicorn app.main:app --host 0.0.0.0 --port ${PORT:-8000} --proxy-headers --forwarded-allow-ips="*"
+# Default command: run migrations then start API server
+CMD ["bash", "start.sh"]

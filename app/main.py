@@ -44,12 +44,7 @@ app = FastAPI(
 settings = get_settings()
 
 # Session middleware required for OAuth state
-app.add_middleware(
-    SessionMiddleware,
-    secret_key=settings.JWT_SECRET_KEY,
-    https_only=True,
-    same_site="lax",
-)
+app.add_middleware(SessionMiddleware, secret_key=settings.JWT_SECRET_KEY)
 
 # Request logging (runs first, wraps everything)
 app.add_middleware(RequestLoggingMiddleware)
