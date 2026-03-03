@@ -17,7 +17,7 @@ from app.schemas import MeResponse, OrganisationOut, TokenResponse, UserOut
 from app.logging_config import get_logger
 
 logger = get_logger(__name__)
-router = APIRouter(prefix="/api/auth", tags=["auth"])
+router = APIRouter(prefix="/auth", tags=["auth"])
 callback_router = APIRouter(tags=["auth"])
 
 oauth = OAuth()
