@@ -114,9 +114,10 @@ async def google_callback(request: Request, db: AsyncSession = Depends(get_db)):
         )
         db.add(org)
         await db.flush()
-
-    # Every new user gets admin role
-    role = UserRole.admin
+        role = UserRole.admin
+    else:
+        # The building already exists! Just add them as a normal Member.
+        role = UserRole.member
 
     # Create the user
     user = User(

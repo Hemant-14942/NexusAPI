@@ -1,8 +1,9 @@
 """Health check endpoint."""
 from datetime import datetime, timezone
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status,Request
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
+import uuid
 
 from app.database import AsyncSessionLocal
 from app.logging_config import get_logger
@@ -12,7 +13,7 @@ router = APIRouter()
 
 
 @router.get("/health")
-async def health_check():
+async def health_check(request: Request):
     """
     GET /health — returns application status and confirms the database is reachable.
     Returns HTTP 503 if the database is unreachable.
@@ -30,11 +31,14 @@ async def health_check():
         )
     except Exception as e:
         logger.error("health_check_failed", error=str(e))
+        # Grab the request_id from the middleware, fallback to a new UUID just in case
+        request_id = str(getattr(request.state, "request_id", uuid.uuid4()))
+
         return JSONResponse(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            content={
-                "status": "unhealthy",
-                "database": "unreachable",
-                "timestamp": datetime.now(timezone.utc).isoformat(),
-            },
-        )
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                content={
+                    "error": "database_unreachable",
+                    "message": "The database is temporarily unreachable.",
+                    "request_id": request_id,
+                },
+            )
